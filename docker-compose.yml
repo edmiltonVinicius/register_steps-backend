@@ -1,0 +1,21 @@
+version: "3.4"
+
+services:
+  backend:
+    container_name: register-step_backend
+    tty: true
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./dev.dockerfile
+    volumes:
+      - ./:/app/
+    ports:
+      - 8080:8080
+    networks:
+      - register-steps
+
+networks:
+  register-steps:
+    name: register-steps__network
+    driver: "bridge"
