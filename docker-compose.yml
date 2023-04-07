@@ -15,7 +15,33 @@ services:
     networks:
       - register-steps
 
+  postgres:
+    image: postgres:latest
+    container_name: register-step_postgres
+    ports:
+      - "6500:5432"
+    volumes:
+      - postgres-register-steps__vol:/var/lib/postgresql/data
+    env_file:
+      - ./.env
+    networks:
+      - register-steps
+
+  pgAdmin:
+    image: dpage/pgadmin4
+    container_name: register-step_pgAdmin
+    env_file:
+      - ./.env
+    ports:
+      - "5050:80"
+    networks:
+      - register-steps
+
 networks:
   register-steps:
     name: register-steps__network
     driver: "bridge"
+
+volumes:
+  postgres-register-steps__vol:
+    driver: local
