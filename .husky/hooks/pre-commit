@@ -1,7 +1,15 @@
 #!/bin/sh
 
-echo "Start commit! \n"
+echo "START COMMIT... \n"
+echo "The tests will run.\n"
 
-sh "./scripts/tests.sh"
+TEST=$(go test ./... | grep "FAIL:")
 
-echo "\nEnd commit! \n"
+if ["$TEST" = ""]; then
+    printf "COMMIT SUCCEEDED. \n"
+    exit 0
+else
+    printf "\nTests fail, RUN: 'sh ./scripts/tests.sh' - for run the tests... \n"
+    printf "\nCOMMIT FAILED!!! \n"
+    exit 1
+fi
