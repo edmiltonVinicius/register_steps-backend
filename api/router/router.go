@@ -22,7 +22,8 @@ func LoadRoutes() {
 	r.GET("/health-check", handlers.HealthCheck)
 
 	user := r.Group("/users")
-	user.GET("/", handlers_users.Register)
+	user.POST("/", handlers_users.Create)
+	user.GET("/:email", handlers_users.GetByEmail)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})

@@ -3,11 +3,11 @@ CREATE TABLE IF NOT EXISTS users (
     "created_at" timestamptz,
     "updated_at" timestamptz,
     "deleted_at" timestamptz,
-    "first_name" text NOT NULL,
-    "last_name" text NOT NULL,
-    "email" text NOT NULL UNIQUE,
-    "password" text NOT NULL,
-    "country" text NOT NULL,
+    "first_name" varchar(100) NOT NULL,
+    "last_name" varchar(100) NOT NULL,
+    "email" varchar(100) NOT NULL UNIQUE,
+    "password" varchar(50) NOT NULL,
+    "country" varchar(20) NOT NULL,
     PRIMARY KEY ("id")
 );
 

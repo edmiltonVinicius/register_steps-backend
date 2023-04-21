@@ -1,4 +1,7 @@
 #!/bin/sh
 
-echo "init commit! \n"
-echo "end commit!"
+echo "Start commit! \n"
+
+sh "./scripts/tests.sh"
+
+echo "\nEnd commit! \n"
