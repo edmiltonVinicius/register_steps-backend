@@ -7,7 +7,7 @@ services:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./dev.dockerfile
+      dockerfile: ./Dockerfile.dev
     volumes:
       - ./:/app/
     ports:
@@ -16,11 +16,11 @@ services:
       - register-steps
 
   postgres:
-    image: postgres:latest
+    image: postgres:15
     container_name: register-step_postgres
     restart: unless-stopped
     ports:
-      - "6500:5432"
+      - 6500:5432
     volumes:
       - postgres-register-steps__vol:/var/lib/postgresql/data
     env_file:
