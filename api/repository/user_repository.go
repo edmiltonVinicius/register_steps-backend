@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"github.com/edmiltonVinicius/register-steps/api/dtos"
+	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/model"
 	"github.com/edmiltonVinicius/register-steps/domain"
 	cache "github.com/edmiltonVinicius/register-steps/redis"
@@ -10,7 +10,7 @@ import (
 const tableName = "users"
 
 type UserRepository interface {
-	Create(data *dtos.CreateUserInputDTO) (err error)
+	Create(data *dto.CreateUserInputDTO) (err error)
 	FindByEmail(email string, user *model.Users) (err error)
 }
 
@@ -21,7 +21,7 @@ func NewUserRepository() UserRepository {
 	return &userRepository{}
 }
 
-func (ur *userRepository) Create(data *dtos.CreateUserInputDTO) (err error) {
+func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
 	u := model.Users{
 		FirstName: data.FirstName,
 		LastName:  data.LastName,
@@ -47,8 +47,9 @@ func (ur *userRepository) FindByEmail(email string, user *model.Users) (err erro
 	er := domain.DB.Table(tableName).Limit(1).Where("email = ?", email).Scan(&user)
 	if er.Error != nil {
 		err = er.Error
-	} else {
-		_ = cache.SetJSon(user.Email, &user, cache.TLL_TEN_DAYS)
+		return
 	}
+
+	_ = cache.SetJSon(user.Email, &user, cache.TLL_TEN_DAYS)
 	return
 }

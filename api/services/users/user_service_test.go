@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/edmiltonVinicius/register-steps/api/dtos"
+	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
 	"github.com/edmiltonVinicius/register-steps/domain"
 	"github.com/stretchr/testify/suite"
@@ -28,7 +28,7 @@ func (suite *UserServiceTestSuite) TearDownSuite() {
 
 // Should create a new user
 func (suite *UserServiceTestSuite) Test01_SuccessFullCreation() {
-	data := dtos.CreateUserInputDTO{
+	data := dto.CreateUserInputDTO{
 		UserType:       "freelancer",
 		FirstName:      "Andre",
 		LastName:       "Silva",
@@ -46,11 +46,11 @@ func (suite *UserServiceTestSuite) Test01_SuccessFullCreation() {
 
 // Should return error be email already exists
 func (suite *UserServiceTestSuite) Test02_DuplicatedEmail() {
-	data := dtos.CreateUserInputDTO{
-		UserType:       "freelancer",
-		FirstName:      "Andre",
+	data := dto.CreateUserInputDTO{
+		UserType:       "freelancer2",
+		FirstName:      "Andre2",
 		LastName:       "Silva",
-		Email:          "andre-silva@gmail.com",
+		Email:          "andre-silva2@gmail.com",
 		Password:       "12345678",
 		RepeatPassword: "12345678",
 		Country:        "brasil",

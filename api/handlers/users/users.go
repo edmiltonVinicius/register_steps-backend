@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/edmiltonVinicius/register-steps/api/dtos"
+	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
 	service "github.com/edmiltonVinicius/register-steps/api/services/users"
 	"github.com/gin-gonic/gin"
 )
 
 func Create(g *gin.Context) {
-	var body dtos.CreateUserInputDTO
+	var body dto.CreateUserInputDTO
 	decoder := json.NewDecoder(g.Request.Body)
 	decoder.DisallowUnknownFields()
 

@@ -3,15 +3,16 @@ package services
 import (
 	"errors"
 
-	"github.com/edmiltonVinicius/register-steps/api/dtos"
+	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
 	"github.com/edmiltonVinicius/register-steps/api/model"
 	"github.com/edmiltonVinicius/register-steps/api/repository"
+	"github.com/edmiltonVinicius/register-steps/api/utils"
 	"github.com/edmiltonVinicius/register-steps/domain"
 )
 
 type UserService interface {
-	Create(data *dtos.CreateUserInputDTO) (err []contracts.ContractError, res *dtos.CreateUserOutPutDTO)
+	Create(data *dto.CreateUserInputDTO) (err []contracts.ContractError, res *dto.CreateUserOutPutDTO)
 	FindByEmail(email string) (user model.Users, errs []contracts.ContractError)
 }
 
@@ -21,7 +22,7 @@ func NewUserService() UserService {
 	return &userService{}
 }
 
-func (u *userService) Create(data *dtos.CreateUserInputDTO) (errs []contracts.ContractError, res *dtos.CreateUserOutPutDTO) {
+func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.ContractError, res *dto.CreateUserOutPutDTO) {
 	err := domain.Validate.Struct(data)
 	if err != nil {
 		if errors.As(err, &domain.ValidationErrors) {
@@ -34,6 +35,24 @@ func (u *userService) Create(data *dtos.CreateUserInputDTO) (errs []contracts.Co
 		}
 		return
 	}
+
+	if data.Password != data.RepeatPassword {
+		errs = []contracts.ContractError{{
+			Field:   "Password",
+			Message: "Password and repeat password is not the same.",
+		}}
+		return
+	}
+
+	hash, e := utils.GenerateHashString(data.Password, 14)
+	if e != nil {
+		errs = []contracts.ContractError{{
+			Field:   "Password",
+			Message: "Error in validation of password.",
+		}}
+		return
+	}
+	data.Password = hash
 
 	ur := repository.NewUserRepository()
 	var us model.Users
@@ -56,7 +75,7 @@ func (u *userService) Create(data *dtos.CreateUserInputDTO) (errs []contracts.Co
 		return
 	}
 
-	res = &dtos.CreateUserOutPutDTO{
+	res = &dto.CreateUserOutPutDTO{
 		UserName: data.FirstName + " " + data.LastName,
 	}
 	return

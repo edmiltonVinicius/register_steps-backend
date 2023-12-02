@@ -24,6 +24,12 @@ func getErrorMsg(fe validator.FieldError) string {
 		return "Should has min " + fe.Param() + " characters"
 	case "max":
 		return "Should has max " + fe.Param() + " characters"
+	case "contains":
+		return "Should contains " + fe.Param() + " characters"
+	case "eqfield":
+		return fe.Field() + " should be equal to " + fe.Param()
+	case "eq":
+		return fe.Field() + " should be equal to " + fe.Param()
 	}
 	return "Unknown error"
 }
