@@ -30,6 +30,8 @@ func getErrorMsg(fe validator.FieldError) string {
 		return fe.Field() + " should be equal to " + fe.Param()
 	case "eq":
 		return fe.Field() + " should be equal to " + fe.Param()
+	case "containsany":
+		return fe.Field() + " should contain any characters by type " + fe.Param()
 	}
 	return "Unknown error"
 }

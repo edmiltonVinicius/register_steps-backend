@@ -32,6 +32,7 @@ func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
 	res := domain.DB.Table(tableName).Create(&u)
 	if res.Error != nil {
 		err = res.Error
+		return
 	}
 	_ = cache.SetJSon(data.Email, &u, cache.TLL_TEN_DAYS)
 	return

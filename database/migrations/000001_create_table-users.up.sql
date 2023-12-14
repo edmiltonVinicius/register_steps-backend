@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
     "first_name" varchar(100) NOT NULL,
     "last_name" varchar(100) NOT NULL,
     "email" varchar(100) NOT NULL UNIQUE,
-    "password" varchar(50) NOT NULL,
+    "password" varchar(255) NOT NULL,
     "country" varchar(20) NOT NULL,
     PRIMARY KEY ("id")
 );

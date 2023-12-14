@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"testing"
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
@@ -38,10 +37,10 @@ func (suite *UserServiceTestSuite) Test01_SuccessFullCreation() {
 		Country:        "brasil",
 	}
 
-	e, u := suite.service.Create(&data)
+	e := suite.service.Create(&data)
 
 	suite.Nil(e)
-	suite.Equal(fmt.Sprintf("%s %s", data.FirstName, data.LastName), u.UserName)
+	// suite.Equal(fmt.Sprintf("%s %s", data.FirstName, data.LastName), u.UserName)
 }
 
 // Should return error be email already exists
@@ -56,9 +55,9 @@ func (suite *UserServiceTestSuite) Test02_DuplicatedEmail() {
 		Country:        "brasil",
 	}
 
-	e, u := suite.service.Create(&data)
+	e := suite.service.Create(&data)
 
-	suite.Nil(u)
+	// suite.Nil(u)
 	suite.Equal([]contracts.ContractError{{
 		Field:   "Email",
 		Message: "User already exists.",

@@ -11,7 +11,3 @@ type CreateUserInputDTO struct {
 	RepeatPassword string `json:"repeat_password" validate:"required,containsany=!@#$%&*()"`
 	Country        string `json:"country" validate:"required"`
 }
-
-type CreateUserOutPutDTO struct {
-	UserName string `json:"userName"`
-}

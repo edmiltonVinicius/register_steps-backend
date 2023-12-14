@@ -1,4 +1,4 @@
-package handlers_users
+package handlers_user
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
-	service "github.com/edmiltonVinicius/register-steps/api/services/users"
+	userService "github.com/edmiltonVinicius/register-steps/api/services/users"
 	"github.com/gin-gonic/gin"
 )
 
@@ -29,9 +29,9 @@ func Create(g *gin.Context) {
 		return
 	}
 
-	service := service.NewUserService()
+	service := userService.NewUserService()
 
-	errCreate, res := service.Create(&body)
+	errCreate := service.Create(&body)
 	if errCreate != nil {
 		r := contracts.JsonResponse{
 			StatusCode: http.StatusBadRequest,
@@ -43,16 +43,16 @@ func Create(g *gin.Context) {
 	}
 
 	r := contracts.JsonResponse{
-		StatusCode: http.StatusOK,
+		StatusCode: http.StatusCreated,
 		Errors:     nil,
-		Data:       res,
+		Data:       nil,
 	}
 	r.SendJsonResponse(g)
 }
 
 func GetByEmail(g *gin.Context) {
 	email := g.Param("email")
-	service := service.NewUserService()
+	service := userService.NewUserService()
 
 	res, err := service.FindByEmail(email)
 	if err != nil {

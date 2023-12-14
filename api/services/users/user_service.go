@@ -12,7 +12,7 @@ import (
 )
 
 type UserService interface {
-	Create(data *dto.CreateUserInputDTO) (err []contracts.ContractError, res *dto.CreateUserOutPutDTO)
+	Create(data *dto.CreateUserInputDTO) (err []contracts.ContractError)
 	FindByEmail(email string) (user model.Users, errs []contracts.ContractError)
 }
 
@@ -22,7 +22,7 @@ func NewUserService() UserService {
 	return &userService{}
 }
 
-func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.ContractError, res *dto.CreateUserOutPutDTO) {
+func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.ContractError) {
 	err := domain.Validate.Struct(data)
 	if err != nil {
 		if errors.As(err, &domain.ValidationErrors) {
@@ -72,11 +72,6 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.Con
 			Field:   "Create",
 			Message: "Error in create new user.",
 		}}
-		return
-	}
-
-	res = &dto.CreateUserOutPutDTO{
-		UserName: data.FirstName + " " + data.LastName,
 	}
 	return
 }
