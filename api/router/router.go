@@ -18,7 +18,7 @@ func LoadRoutes() {
 
 	router.Use(middleware.Recovery())
 
-	r := router.Group("/api")
+	r := router.Group("/v1")
 	r.GET("/health-check", handlers.HealthCheck)
 
 	user := r.Group("/users")
