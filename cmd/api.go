@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	domain.LoadEnv(domain.DEV)
+	domain.LoadEnv(false)
 	domain.ConnectDB()
 	domain.StartRedis()
 	router.LoadRoutes()

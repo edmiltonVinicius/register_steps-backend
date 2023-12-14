@@ -1,7 +1,7 @@
 package domain
 
 func StartDependencies() {
-	LoadEnv(TEST)
+	LoadEnv(true)
 	ConnectDB()
 	StartRedis()
 }

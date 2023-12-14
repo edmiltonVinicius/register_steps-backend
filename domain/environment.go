@@ -33,12 +33,12 @@ type globalEnv struct {
 	REDIS_DB       string
 }
 
-func LoadEnv(environment string) {
+func LoadEnv(isRunningTest bool) {
 	var env string
 
-	if environment == TEST {
+	if isRunningTest {
 		root := utils.GetRootPath()
-		env = string(root) + "/.env.test"
+		env = root + "/.env.test"
 	} else {
 		env = ".env"
 	}
@@ -64,5 +64,5 @@ func LoadEnv(environment string) {
 		CTX:            context.Background(),
 	}
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * 2)
 }
