@@ -31,6 +31,7 @@ type globalEnv struct {
 	REDIS_PASSWORD string
 	REDIS_USERNAME string
 	REDIS_DB       string
+	RUN_MIGRATIONS bool
 }
 
 func LoadEnv(isRunningTest bool) {
@@ -62,6 +63,7 @@ func LoadEnv(isRunningTest bool) {
 		REDIS_USERNAME: os.Getenv("REDIS_USER"),
 		REDIS_DB:       os.Getenv("REDIS_DB"),
 		CTX:            context.Background(),
+		RUN_MIGRATIONS: os.Getenv("RUN_MIGRATIONS") == "true",
 	}
 
 	time.Sleep(time.Second * 2)

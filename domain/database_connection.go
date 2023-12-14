@@ -58,8 +58,8 @@ func ConnectDB() {
 	var migrations string
 
 	if Environment.ENV == TEST {
-		path := utils.GetRootPath()
-		migrations = "file://" + string(path) + "/database/migrations"
+		root := utils.GetRootPath()
+		migrations = "file://" + root + "/database/migrations"
 	} else {
 		migrations = "file://./database/migrations"
 	}
@@ -75,5 +75,13 @@ func ConnectDB() {
 		os.Exit(1)
 	}
 
-	m.Up()
+	if !Environment.RUN_MIGRATIONS {
+		return
+	}
+
+	err = m.Up()
+	if err != migrate.ErrNoChange {
+		log.Fatal("Failed to run migration: ", err.Error())
+		os.Exit(1)
+	}
 }
