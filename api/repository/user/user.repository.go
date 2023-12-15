@@ -2,34 +2,29 @@ package repository
 
 import (
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
-	"github.com/edmiltonVinicius/register-steps/api/model"
-	"github.com/edmiltonVinicius/register-steps/domain"
+	"github.com/edmiltonVinicius/register-steps/api/entity"
+	"github.com/edmiltonVinicius/register-steps/config"
 	cache "github.com/edmiltonVinicius/register-steps/redis"
 )
 
 const tableName = "users"
 
-type UserRepository interface {
-	Create(data *dto.CreateUserInputDTO) (err error)
-	FindByEmail(email string, user *model.Users) (err error)
-}
-
 type userRepository struct {
 }
 
-func NewUserRepository() UserRepository {
+func NewUserRepository() IUserRepository {
 	return &userRepository{}
 }
 
 func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
-	u := model.Users{
+	u := entity.User{
 		FirstName: data.FirstName,
 		LastName:  data.LastName,
 		Email:     data.Email,
 		Password:  data.Password,
 		Country:   data.Country,
 	}
-	res := domain.DB.Table(tableName).Create(&u)
+	res := config.DB.Table(tableName).Create(&u)
 	if res.Error != nil {
 		err = res.Error
 		return
@@ -38,14 +33,14 @@ func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
 	return
 }
 
-func (ur *userRepository) FindByEmail(email string, user *model.Users) (err error) {
+func (ur *userRepository) FindByEmail(email string, user *entity.User) (err error) {
 	err = cache.GetJSon(email, &user)
 	if err == nil {
 		return
 	}
 	err = nil
 
-	er := domain.DB.Table(tableName).Limit(1).Where("email = ?", email).Scan(&user)
+	er := config.DB.Table(tableName).Limit(1).Where("email = ?", email).Scan(&user)
 	if er.Error != nil {
 		err = er.Error
 		return

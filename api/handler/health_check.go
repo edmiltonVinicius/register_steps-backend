@@ -1,9 +1,9 @@
-package handlers
+package handler
 
 import (
 	"net/http"
 
-	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
+	contracts "github.com/edmiltonVinicius/register-steps/api/handler/contract"
 	"github.com/gin-gonic/gin"
 )
 

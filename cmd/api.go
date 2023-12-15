@@ -2,12 +2,12 @@ package main
 
 import (
 	"github.com/edmiltonVinicius/register-steps/api/router"
-	"github.com/edmiltonVinicius/register-steps/domain"
+	"github.com/edmiltonVinicius/register-steps/config"
 )
 
 func main() {
-	domain.LoadEnv(false)
-	domain.ConnectDB()
-	domain.StartRedis()
+	config.LoadEnv(false)
+	config.ConnectDB()
+	config.StartRedis()
 	router.LoadRoutes()
 }

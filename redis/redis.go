@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	"github.com/edmiltonVinicius/register-steps/domain"
+	"github.com/edmiltonVinicius/register-steps/config"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -16,7 +16,7 @@ const (
 )
 
 func checkStatusConnection() (err error) {
-	err = domain.RedisClient.Ping(domain.Environment.CTX).Err()
+	err = config.RedisClient.Ping(config.Environment.CTX).Err()
 	return
 }
 
@@ -30,7 +30,7 @@ func SetJSon(key string, value interface{}, ttl time.Duration) (err error) {
 	if err != nil {
 		return
 	}
-	err = domain.RedisClient.Set(domain.Environment.CTX, key, res, ttl).Err()
+	err = config.RedisClient.Set(config.Environment.CTX, key, res, ttl).Err()
 	return
 }
 
@@ -40,7 +40,7 @@ func GetJSon(key string, value interface{}) (err error) {
 		return
 	}
 
-	res, err := domain.RedisClient.Get(domain.Environment.CTX, key).Result()
+	res, err := config.RedisClient.Get(config.Environment.CTX, key).Result()
 	if err == redis.Nil {
 		err = errors.New("key not found")
 		return

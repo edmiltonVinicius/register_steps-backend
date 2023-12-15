@@ -6,10 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/edmiltonVinicius/register-steps/api/handlers"
-	handlerUser "github.com/edmiltonVinicius/register-steps/api/handlers/user"
+	"github.com/edmiltonVinicius/register-steps/api/handler"
+	handlerUser "github.com/edmiltonVinicius/register-steps/api/handler/user"
 	"github.com/edmiltonVinicius/register-steps/api/middleware"
-	"github.com/edmiltonVinicius/register-steps/domain"
+	"github.com/edmiltonVinicius/register-steps/config"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,7 +19,7 @@ func LoadRoutes() {
 	router.Use(middleware.Recovery())
 
 	r := router.Group("/v1")
-	r.GET("/health-check", handlers.HealthCheck)
+	r.GET("/health-check", handler.HealthCheck)
 
 	user := r.Group("/users")
 	user.POST("/", handlerUser.Create)
@@ -30,7 +30,7 @@ func LoadRoutes() {
 	})
 
 	s := &http.Server{
-		Addr:           fmt.Sprintf(":%s", domain.Environment.SERVER_PORT),
+		Addr:           fmt.Sprintf(":%s", config.Environment.SERVER_PORT),
 		Handler:        router,
 		ReadTimeout:    10 * time.Second,
 		WriteTimeout:   10 * time.Second,

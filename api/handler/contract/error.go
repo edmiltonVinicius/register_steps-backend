@@ -1,4 +1,4 @@
-package contracts
+package contract
 
 type ContractError struct {
 	Field   string `json:"field"`

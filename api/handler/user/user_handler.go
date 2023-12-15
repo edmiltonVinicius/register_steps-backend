@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
-	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
-	userService "github.com/edmiltonVinicius/register-steps/api/services/users"
+	"github.com/edmiltonVinicius/register-steps/api/handler/contract"
+	userService "github.com/edmiltonVinicius/register-steps/api/service/user"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,9 +17,9 @@ func Create(g *gin.Context) {
 
 	err := decoder.Decode(&body)
 	if err != nil {
-		r := contracts.JsonResponse{
+		r := contract.JsonResponse{
 			StatusCode: http.StatusBadRequest,
-			Errors: []contracts.ContractError{{
+			Errors: []contract.ContractError{{
 				Field:   "Body",
 				Message: err.Error(),
 			}},
@@ -33,7 +33,7 @@ func Create(g *gin.Context) {
 
 	errCreate := service.Create(&body)
 	if errCreate != nil {
-		r := contracts.JsonResponse{
+		r := contract.JsonResponse{
 			StatusCode: http.StatusBadRequest,
 			Errors:     errCreate,
 			Data:       nil,
@@ -42,7 +42,7 @@ func Create(g *gin.Context) {
 		return
 	}
 
-	r := contracts.JsonResponse{
+	r := contract.JsonResponse{
 		StatusCode: http.StatusCreated,
 		Errors:     nil,
 		Data:       nil,
@@ -56,7 +56,7 @@ func GetByEmail(g *gin.Context) {
 
 	res, err := service.FindByEmail(email)
 	if err != nil {
-		r := contracts.JsonResponse{
+		r := contract.JsonResponse{
 			StatusCode: http.StatusBadRequest,
 			Errors:     err,
 			Data:       nil,
@@ -65,7 +65,7 @@ func GetByEmail(g *gin.Context) {
 		return
 	}
 
-	r := contracts.JsonResponse{
+	r := contract.JsonResponse{
 		StatusCode: http.StatusOK,
 		Errors:     nil,
 		Data:       res,

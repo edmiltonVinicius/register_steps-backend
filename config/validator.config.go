@@ -1,7 +1,7 @@
-package domain
+package config
 
 import (
-	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
+	"github.com/edmiltonVinicius/register-steps/api/handler/contract"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -36,9 +36,9 @@ func getErrorMsg(fe validator.FieldError) string {
 	return "Unknown error"
 }
 
-func RunValidator(errs validator.ValidationErrors) (msgs []contracts.ContractError) {
+func RunValidator(errs validator.ValidationErrors) (msgs []contract.ContractError) {
 	for _, err := range errs {
-		msgs = append(msgs, contracts.ContractError{
+		msgs = append(msgs, contract.ContractError{
 			Field:   err.Field(),
 			Message: getErrorMsg(err),
 		})

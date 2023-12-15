@@ -1,4 +1,4 @@
-package domain
+package config
 
 func StartDependencies() {
 	LoadEnv(true)

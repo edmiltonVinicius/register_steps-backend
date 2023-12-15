@@ -1,8 +1,8 @@
-package model
+package entity
 
 import "gorm.io/gorm"
 
-type Users struct {
+type User struct {
 	gorm.Model
 	FirstName string `gorm:"column:first_name; not null;"`
 	LastName  string `gorm:"column:last_name; not null;"`

@@ -4,31 +4,26 @@ import (
 	"errors"
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
-	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
-	"github.com/edmiltonVinicius/register-steps/api/model"
-	"github.com/edmiltonVinicius/register-steps/api/repository"
+	"github.com/edmiltonVinicius/register-steps/api/entity"
+	"github.com/edmiltonVinicius/register-steps/api/handler/contract"
+	repository "github.com/edmiltonVinicius/register-steps/api/repository/user"
 	"github.com/edmiltonVinicius/register-steps/api/utils"
-	"github.com/edmiltonVinicius/register-steps/domain"
+	"github.com/edmiltonVinicius/register-steps/config"
 )
-
-type UserService interface {
-	Create(data *dto.CreateUserInputDTO) (err []contracts.ContractError)
-	FindByEmail(email string) (user model.Users, errs []contracts.ContractError)
-}
 
 type userService struct{}
 
-func NewUserService() UserService {
+func NewUserService() IUserService {
 	return &userService{}
 }
 
-func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.ContractError) {
-	err := domain.Validate.Struct(data)
+func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contract.ContractError) {
+	err := config.Validate.Struct(data)
 	if err != nil {
-		if errors.As(err, &domain.ValidationErrors) {
-			errs = domain.RunValidator(domain.ValidationErrors)
+		if errors.As(err, &config.ValidationErrors) {
+			errs = config.RunValidator(config.ValidationErrors)
 		} else {
-			errs = []contracts.ContractError{{
+			errs = []contract.ContractError{{
 				Field:   "Internal error",
 				Message: err.Error(),
 			}}
@@ -37,7 +32,7 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.Con
 	}
 
 	if data.Password != data.RepeatPassword {
-		errs = []contracts.ContractError{{
+		errs = []contract.ContractError{{
 			Field:   "Password",
 			Message: "Password and repeat password is not the same.",
 		}}
@@ -46,7 +41,7 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.Con
 
 	hash, e := utils.GenerateHashString(data.Password, 14)
 	if e != nil {
-		errs = []contracts.ContractError{{
+		errs = []contract.ContractError{{
 			Field:   "Password",
 			Message: "Error in validation of password.",
 		}}
@@ -55,11 +50,11 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.Con
 	data.Password = hash
 
 	ur := repository.NewUserRepository()
-	var us model.Users
+	var us entity.User
 
 	err = ur.FindByEmail(data.Email, &us)
 	if err == nil && us.Email != "" {
-		errs = []contracts.ContractError{{
+		errs = []contract.ContractError{{
 			Field:   "Email",
 			Message: "User already exists.",
 		}}
@@ -68,7 +63,7 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.Con
 
 	err = ur.Create(data)
 	if err != nil {
-		errs = []contracts.ContractError{{
+		errs = []contract.ContractError{{
 			Field:   "Create",
 			Message: "Error in create new user.",
 		}}
@@ -76,12 +71,12 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contracts.Con
 	return
 }
 
-func (u *userService) FindByEmail(email string) (user model.Users, errs []contracts.ContractError) {
+func (u *userService) FindByEmail(email string) (user entity.User, errs []contract.ContractError) {
 	ur := repository.NewUserRepository()
 
 	err := ur.FindByEmail(email, &user)
 	if err != nil {
-		errs = []contracts.ContractError{{
+		errs = []contract.ContractError{{
 			Field:   "Error finding user",
 			Message: "Error find user, please try again.",
 		}}

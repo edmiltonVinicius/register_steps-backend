@@ -4,25 +4,25 @@ import (
 	"testing"
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
-	"github.com/edmiltonVinicius/register-steps/api/handlers/contracts"
-	"github.com/edmiltonVinicius/register-steps/domain"
+	"github.com/edmiltonVinicius/register-steps/api/handler/contract"
+	"github.com/edmiltonVinicius/register-steps/config"
 	"github.com/stretchr/testify/suite"
 )
 
 type UserServiceTestSuite struct {
 	suite.Suite
-	service UserService
+	service IUserService
 }
 
 func (suite *UserServiceTestSuite) SetupSuite() {
-	domain.StartDependencies()
+	config.StartDependencies()
 	suite.service = NewUserService()
 }
 
 func (suite *UserServiceTestSuite) TearDownSuite() {
-	domain.ClearTable("users")
-	domain.ClearRedis()
-	domain.DownDependencies()
+	config.ClearTable("users")
+	config.ClearRedis()
+	config.DownDependencies()
 }
 
 // Should create a new user
@@ -58,7 +58,7 @@ func (suite *UserServiceTestSuite) Test02_DuplicatedEmail() {
 	e := suite.service.Create(&data)
 
 	// suite.Nil(u)
-	suite.Equal([]contracts.ContractError{{
+	suite.Equal([]contract.ContractError{{
 		Field:   "Email",
 		Message: "User already exists.",
 	}}, e)
