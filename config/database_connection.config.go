@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/edmiltonVinicius/register-steps/api/utils"
 	"github.com/golang-migrate/migrate/v4"
@@ -20,39 +19,42 @@ import (
 var Conn *sql.DB
 var DB *gorm.DB
 
-func ConnectDB() {
+type DatabaseConnection struct {
+	Conn    *sql.DB
+	DB      *gorm.DB
+	Migrate *migrate.Migrate
+}
+
+func StartConnectionDB() (*DatabaseConnection, error) {
 	dsn := fmt.Sprintf(
 		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Shanghai",
 		Environment.DB_HOST, Environment.DB_USER, Environment.DB_PASSWORD, Environment.DB_NAME, Environment.DB_PORT,
 	)
 
-	con, err := gorm.Open(driverGorm.Open(dsn), &gorm.Config{
+	db, err := gorm.Open(driverGorm.Open(dsn), &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
-		log.Fatal("Failed to connect to the Database. \n", err.Error())
-		os.Exit(1)
+		log.Fatal("failed to connect to the Database. \n", err.Error())
+		return nil, err
 	}
 
-	db, err := con.DB()
+	con, err := db.DB()
 	if err != nil {
 		log.Fatal("Failed to get DB object. \n", err.Error())
-		os.Exit(1)
+		return nil, err
 	}
-
-	Conn = db
-	DB = con
 
 	if Environment.ENV == DEV {
-		DB.Logger = logger.Default.LogMode(logger.Info)
+		db.Logger = logger.Default.LogMode(logger.Info)
 	} else {
-		DB.Logger = logger.Default.LogMode(logger.Silent)
+		db.Logger = logger.Default.LogMode(logger.Silent)
 	}
 
-	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	driver, err := postgres.WithInstance(con, &postgres.Config{})
 	if err != nil {
-		log.Fatal("Failed to connect to the Postgres magrate from current connection. \n", err.Error())
-		os.Exit(1)
+		log.Fatal("Failed to connect to the Postgres migrate from current connection. \n", err.Error())
+		return nil, err
 	}
 
 	var migrations string
@@ -72,16 +74,31 @@ func ConnectDB() {
 
 	if err != nil {
 		log.Fatal("Failed to load settings migration: ", err.Error())
-		os.Exit(1)
+		return nil, err
 	}
+
+	return &DatabaseConnection{
+		Conn:    con,
+		DB:      db,
+		Migrate: m,
+	}, nil
+}
+
+func ConnectDB() {
+	connection, err := StartConnectionDB()
+	if err != nil {
+		log.Fatal("Failed to connect to the Database. \n", err.Error())
+	}
+
+	Conn = connection.Conn
+	DB = connection.DB
 
 	if !Environment.RUN_MIGRATIONS {
 		return
 	}
 
-	err = m.Up()
+	err = connection.Migrate.Up()
 	if err != migrate.ErrNoChange {
-		log.Fatal("Failed to run migration: ", err.Error())
-		os.Exit(1)
+		log.Fatal("failed to run all migrations UP: ", err.Error())
 	}
 }

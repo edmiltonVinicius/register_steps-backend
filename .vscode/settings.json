@@ -1,12 +1,10 @@
 {
     "editor.formatOnSaveMode": "file",
-    "cSpell.words": [
-        "dtos"
-    ],
     "[go]": {
         "editor.formatOnSave": true,
         "editor.formatOnPaste": true,
         "editor.formatOnType": false,
         "editor.defaultFormatter": "golang.go"
-    }
+    },
+    "workbench.colorTheme": "JetBrains Darcula Theme"
 }
