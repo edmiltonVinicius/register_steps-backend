@@ -1,0 +1,1 @@
+swag init -g ./api/router/router.go -o ./api/docs

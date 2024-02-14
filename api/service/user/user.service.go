@@ -53,7 +53,15 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contract.Cont
 	var us entity.User
 
 	err = ur.FindByEmail(data.Email, &us)
-	if err == nil && us.Email != "" {
+	if err != nil {
+		errs = []contract.ContractError{{
+			Field:   "Email",
+			Message: "Error to validate",
+		}}
+		return
+	}
+
+	if us.Email != "" {
 		errs = []contract.ContractError{{
 			Field:   "Email",
 			Message: "User already exists.",

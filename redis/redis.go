@@ -16,6 +16,10 @@ const (
 )
 
 func checkStatusConnection() (err error) {
+	if config.RedisClient == nil {
+		err = errors.New("redis no connected")
+		return
+	}
 	err = config.RedisClient.Ping(config.Environment.CTX).Err()
 	return
 }

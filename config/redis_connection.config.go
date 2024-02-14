@@ -25,6 +25,7 @@ func StartRedis() {
 	_, err = client.Ping(Environment.CTX).Result()
 	if err != nil {
 		log.Println("Error connecting redis: ", err)
+		RedisClient = nil
 		return
 	}
 

@@ -1,10 +1,13 @@
 package repository
 
 import (
+	"errors"
+
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/entity"
 	"github.com/edmiltonVinicius/register-steps/config"
 	cache "github.com/edmiltonVinicius/register-steps/redis"
+	"gorm.io/gorm"
 )
 
 const tableName = "users"
@@ -29,19 +32,20 @@ func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
 		err = res.Error
 		return
 	}
+
 	_ = cache.SetJSon(data.Email, &u, cache.TLL_TEN_DAYS)
 	return
 }
 
 func (ur *userRepository) FindByEmail(email string, user *entity.User) (err error) {
 	err = cache.GetJSon(email, &user)
-	if err == nil {
+	if err == nil && user.Email != "" {
 		return
 	}
 	err = nil
 
-	er := config.DB.Table(tableName).Limit(1).Where("email = ?", email).Scan(&user)
-	if er.Error != nil {
+	er := config.DB.Model(&entity.User{}).Omit("password", "updated_at").Where("email = ?", email).Scan(&user)
+	if er.Error != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		err = er.Error
 		return
 	}

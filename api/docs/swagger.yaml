@@ -1,0 +1,158 @@
+basePath: /v1
+definitions:
+  contract.ContractError:
+    properties:
+      field:
+        type: string
+      message:
+        type: string
+    type: object
+  contract.JsonResponse:
+    properties:
+      data: {}
+      errors:
+        items:
+          $ref: '#/definitions/contract.ContractError'
+        type: array
+      status_code:
+        type: integer
+    type: object
+  dto.CreateUserInputDTO:
+    properties:
+      country:
+        type: string
+      email:
+        type: string
+      first_name:
+        maxLength: 20
+        minLength: 3
+        type: string
+      last_name:
+        maxLength: 20
+        minLength: 3
+        type: string
+      password:
+        type: string
+      repeat_password:
+        type: string
+      user_type:
+        type: string
+    required:
+    - country
+    - email
+    - first_name
+    - last_name
+    - password
+    - repeat_password
+    - user_type
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: edmilton.vinicius2@gmail.com
+    name: API support, use or new implementations
+    url: https://github.com/edmiltonVinicius
+  description: This is a documentation for use API, write in Golang.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Register steps API
+  version: "1.0"
+paths:
+  /cache:
+    delete:
+      description: This endpoint is used to clear the cache
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+      summary: Clear cache
+      tags:
+      - Cache
+  /health-check:
+    get:
+      description: This endpoint is used to check if the server is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+      summary: Health check
+      tags:
+      - Health check
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: Data required to create a new user
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserInputDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+      summary: Create user
+      tags:
+      - Users
+  /users/:email:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email of user searched
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/contract.JsonResponse'
+      summary: Get user by email
+      tags:
+      - Users
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
