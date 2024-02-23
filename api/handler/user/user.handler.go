@@ -1,4 +1,4 @@
-package handlers_user
+package handler
 
 import (
 	"encoding/json"
@@ -6,18 +6,11 @@ import (
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/handler/contract"
-	userService "github.com/edmiltonVinicius/register-steps/api/service/user"
 	"github.com/gin-gonic/gin"
 
-	_ "github.com/swaggo/files"       // swagger embed files
-	_ "github.com/swaggo/gin-swagger" // gin-swagger middleware
+	_ "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger"
 )
-
-var service userService.IUserService
-
-func init() {
-	service = userService.NewUserService()
-}
 
 // @Summary		Create user
 // @Description	Create a new user
@@ -29,7 +22,7 @@ func init() {
 // @Failure		400	{object}	contract.JsonResponse
 // @Failure		500	{object}	contract.JsonResponse
 // @Router			/users [post]
-func Create(g *gin.Context) {
+func (uh *UserHandler) CreateUser(g *gin.Context) {
 	var body dto.CreateUserInputDTO
 	decoder := json.NewDecoder(g.Request.Body)
 	decoder.DisallowUnknownFields()
@@ -48,7 +41,7 @@ func Create(g *gin.Context) {
 		return
 	}
 
-	errCreate := service.Create(&body)
+	errCreate := uh.service.Create(&body)
 	if errCreate != nil {
 		r := contract.JsonResponse{
 			StatusCode: http.StatusBadRequest,
@@ -76,10 +69,10 @@ func Create(g *gin.Context) {
 // @Failure		400	{object}	contract.JsonResponse
 // @Failure		500	{object}	contract.JsonResponse
 // @Router			/users/:email [get]
-func GetByEmail(g *gin.Context) {
+func (uh *UserHandler) GetByEmail(g *gin.Context) {
 	email := g.Param("email")
 
-	res, err := service.FindByEmail(email)
+	res, err := uh.service.FindByEmail(email)
 	if err != nil {
 		r := contract.JsonResponse{
 			StatusCode: http.StatusBadRequest,

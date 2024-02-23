@@ -9,13 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-const (
-	TTL_ONE_MINUTE = 1000
-	TTL_ONE_DAY    = time.Hour * 24
-	TLL_TEN_DAYS   = time.Hour * 24 * 10
-)
-
-func checkStatusConnection() (err error) {
+func (c *Cache) CheckStatusConnection() (err error) {
 	if config.RedisClient == nil {
 		err = errors.New("redis no connected")
 		return
@@ -24,8 +18,8 @@ func checkStatusConnection() (err error) {
 	return
 }
 
-func SetJSon(key string, value interface{}, ttl time.Duration) (err error) {
-	err = checkStatusConnection()
+func (c *Cache) SetJSon(key string, value interface{}, ttl time.Duration) (err error) {
+	err = c.CheckStatusConnection()
 	if err != nil {
 		return
 	}
@@ -38,8 +32,8 @@ func SetJSon(key string, value interface{}, ttl time.Duration) (err error) {
 	return
 }
 
-func GetJSon(key string, value interface{}) (err error) {
-	err = checkStatusConnection()
+func (c *Cache) GetJSon(key string, value interface{}) (err error) {
+	err = c.CheckStatusConnection()
 	if err != nil {
 		return
 	}

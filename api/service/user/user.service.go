@@ -6,18 +6,11 @@ import (
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/entity"
 	"github.com/edmiltonVinicius/register-steps/api/handler/contract"
-	repository "github.com/edmiltonVinicius/register-steps/api/repository/user"
 	"github.com/edmiltonVinicius/register-steps/api/utils"
 	"github.com/edmiltonVinicius/register-steps/config"
 )
 
-type userService struct{}
-
-func NewUserService() IUserService {
-	return &userService{}
-}
-
-func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contract.ContractError) {
+func (u *UserService) Create(data *dto.CreateUserInputDTO) (errs []contract.ContractError) {
 	err := config.Validate.Struct(data)
 	if err != nil {
 		if errors.As(err, &config.ValidationErrors) {
@@ -49,10 +42,9 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contract.Cont
 	}
 	data.Password = hash
 
-	ur := repository.NewUserRepository()
 	var us entity.User
 
-	err = ur.FindByEmail(data.Email, &us)
+	err = u.repository.FindByEmail(data.Email, &us)
 	if err != nil {
 		errs = []contract.ContractError{{
 			Field:   "Email",
@@ -69,7 +61,7 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contract.Cont
 		return
 	}
 
-	err = ur.Create(data)
+	err = u.repository.Create(data)
 	if err != nil {
 		errs = []contract.ContractError{{
 			Field:   "Create",
@@ -79,10 +71,8 @@ func (u *userService) Create(data *dto.CreateUserInputDTO) (errs []contract.Cont
 	return
 }
 
-func (u *userService) FindByEmail(email string) (user entity.User, errs []contract.ContractError) {
-	ur := repository.NewUserRepository()
-
-	err := ur.FindByEmail(email, &user)
+func (u *UserService) FindByEmail(email string) (user entity.User, errs []contract.ContractError) {
+	err := u.repository.FindByEmail(email, &user)
 	if err != nil {
 		errs = []contract.ContractError{{
 			Field:   "Error finding user",
