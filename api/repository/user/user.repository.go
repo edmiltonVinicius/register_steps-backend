@@ -1,25 +1,18 @@
-package repository
+package userRepository
 
 import (
 	"errors"
 
 	dto "github.com/edmiltonVinicius/register-steps/api/dto/user"
 	"github.com/edmiltonVinicius/register-steps/api/entity"
+	"github.com/edmiltonVinicius/register-steps/cache"
 	"github.com/edmiltonVinicius/register-steps/config"
-	cache "github.com/edmiltonVinicius/register-steps/redis"
 	"gorm.io/gorm"
 )
 
 const tableName = "users"
 
-type userRepository struct {
-}
-
-func NewUserRepository() IUserRepository {
-	return &userRepository{}
-}
-
-func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
+func (ur *UserRepository) Create(data *dto.CreateUserInputDTO) (err error) {
 	u := entity.User{
 		FirstName: data.FirstName,
 		LastName:  data.LastName,
@@ -33,12 +26,12 @@ func (ur *userRepository) Create(data *dto.CreateUserInputDTO) (err error) {
 		return
 	}
 
-	_ = cache.SetJSon(data.Email, &u, cache.TLL_TEN_DAYS)
+	_ = ur.cache.SetJSon(data.Email, &u, cache.TLL_TEN_DAYS)
 	return
 }
 
-func (ur *userRepository) FindByEmail(email string, user *entity.User) (err error) {
-	err = cache.GetJSon(email, &user)
+func (ur *UserRepository) FindByEmail(email string, user *entity.User) (err error) {
+	err = ur.cache.GetJSon(email, &user)
 	if err == nil && user.Email != "" {
 		return
 	}
@@ -50,6 +43,6 @@ func (ur *userRepository) FindByEmail(email string, user *entity.User) (err erro
 		return
 	}
 
-	_ = cache.SetJSon(user.Email, &user, cache.TLL_TEN_DAYS)
+	_ = ur.cache.SetJSon(user.Email, &user, cache.TLL_TEN_DAYS)
 	return
 }

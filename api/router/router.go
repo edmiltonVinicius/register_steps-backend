@@ -7,12 +7,10 @@ import (
 	"time"
 
 	_ "github.com/edmiltonVinicius/register-steps/api/docs"
+	"github.com/edmiltonVinicius/register-steps/api/router/routes"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/edmiltonVinicius/register-steps/api/handler"
-	handler_cache "github.com/edmiltonVinicius/register-steps/api/handler/cache"
-	handlerUser "github.com/edmiltonVinicius/register-steps/api/handler/user"
 	"github.com/edmiltonVinicius/register-steps/api/middleware"
 	"github.com/edmiltonVinicius/register-steps/config"
 	"github.com/gin-gonic/gin"
@@ -44,14 +42,11 @@ func LoadRoutes() {
 
 	router.Use(middleware.Recovery())
 
-	r := router.Group("/v1")
-	r.GET("/health-check", handler.HealthCheck)
+	g := router.Group("/v1")
 
-	r.DELETE("/cache", handler_cache.CleanCache)
-
-	user := r.Group("/users")
-	user.POST("/", handlerUser.Create)
-	user.GET("/:email", handlerUser.GetByEmail)
+	routes.Health(g)
+	routes.Cache(g)
+	routes.Users(g)
 
 	router.NoRoute(func(c *gin.Context) {
 		c.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
